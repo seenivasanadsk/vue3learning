@@ -1,0 +1,80 @@
+Template syntax
+Reactive state [NEED_TO_REED_CONSIDER]
+Computed with additional getters and setters
+Class and Styles
+    Class
+        object  = keys are classname and values or truthines boolean value
+                = we can also use :class and class attribute togeather here class is static class names
+        array   = arrays are considered as multiple class names
+                = we can also use object instead of string in class array to achive boolean class
+        vue component concat it class names with children component class names
+    Styles
+        object  = keys are css property and values are css values in object
+        array   = in array we can pass multiple object wich is a collection of css styles
+    vue style automatically added css prefixing for different browser like -webkit-, -moz-, -o-, -ms-
+Conditional rendering
+    v-if="true"
+    v-else-if="type === 'B'"
+    v-else
+    <template> is invisible wrapper we can use it for only render group of component without adding extra element
+    v-show  = only makes css display property to hide from view
+    v-if    = even not render into the dom and also not execute its children component
+    don't use v-if and v-for togeather
+List rendering
+    v-for="item in items" 
+    v-for="(item, index) in items" = works for both array and object
+    v-for="{ message } in items" = destructring
+    v-for="item of items" = for iterator only it not works for array and object
+    v-for="n in 10" = use it for range
+    must add key to the element
+    array mutation methods
+        push()
+        pop()
+        shift()
+        unshift()
+        splice()
+        sort()
+        reverse()
+    we should make a copy of array when using array in Computed because it mutate original array
+Event handlers
+    we should use event handler for inline expression and also method assinging
+    and the method handler always get a event object as arguments
+    we can access `$event` special variable to access event in the inline handler
+    Event Modifiers
+        .stop       => stopPropagation
+        .prevent    => preventDefault
+        .self       => Only works if current element was triggered not its children
+        .capture    => first trigger children element
+        .once       => it trigger only one time
+        .passive    => [DOUBT][USED FOR TOUCHES AND SCROLL]
+        we can make chain the event handlers
+        Do not use .passive and .prevent together, because .passive already indicates to the browser that you do not intend to prevent the event's default behavior, and you will likely see a warning from the browser if you do so.
+    Key Modifiers
+        .enter
+        .tab
+        .delete (captures both "Delete" and "Backspace" keys)
+        .esc
+        .space
+        .up
+        .down
+        .left
+        .right
+        .ctrl
+        .alt
+        .shift
+        .meta
+        @click.ctrl = this will fire even if Alt or Shift is also pressed
+        @click.ctrl.exact = this will only fire when Ctrl and no other keys are pressed
+        @click.exact = this will only fire when no system modifiers are pressed
+    Mouse Button Modifiers
+        .left
+        .right
+        .middle
+Form Input Bindings
+        <input :value="text" @input="event => text = event.target.value">
+        <input v-model="text">
+    v-model will ignore the initial value, checked or selected attributes found on any form elements. It will always treat the current bound JavaScript state as the source of truth. You should declare the initial value on the JavaScript side, using reactivity APIs.
+    <input v-model.lazy="msg" /> = synced after "change" instead of "input"
+    v-model.number  = typecast string to number automatically
+    v-model.trim
+    
