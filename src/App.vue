@@ -1,11 +1,10 @@
 <script setup>
-import { ref, reactive } from 'vue'
-const val = ref()
+// const AsyncComp = defineAsyncComponent(() => import('./components/HelloWorld.vue'))
 </script>
 
 <template>
-  {{ val }}
-  <input type="text" v-model.lazy="val" />
+  <AsyncComp> </AsyncComp>
+  <MyComponent> </MyComponent>
 </template>
 
 <style scoped></style>

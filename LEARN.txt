@@ -77,4 +77,285 @@ Form Input Bindings
     <input v-model.lazy="msg" /> = synced after "change" instead of "input"
     v-model.number  = typecast string to number automatically
     v-model.trim
-    
+Lifecycle
+    mounted
+    created
+    beforemount
+    beforeupdate
+    updated
+    unmounted
+    beforeunmounted
+    etc... (for dev only and ssr)
+Watchers
+    watch()
+        watch(reactive source|getters|array of source, callback with new and old value as args, options)
+        options are {deep: true}, { immediate: true }, { once: true }
+    watchEffect()
+        watchEffect is same as watch but this is automatically track sources that we used unlike watch
+        and watchEffect also call { immediate: true } automatically
+    Side Effect Cleanup()
+        import { watch, onWatcherCleanup } from 'vue'
+        onWatcherCleanup is called when the previous watch not fetched yet we can abort this
+            ```watch(id, (newId) => {
+                const controller = new AbortController()
+
+                fetch(`/api/${newId}`, { signal: controller.signal }).then(() => {
+                    // callback logic
+                })
+
+                onWatcherCleanup(() => {
+                    // abort stale request
+                    controller.abort()
+                })
+            })```
+        We can also get the onCleanup as third argument in watch and first argument in watchEffect
+            ```
+            watch(id, (newId, oldId, onCleanup) => {
+                // ...
+                onCleanup(() => {
+                    // cleanup logic
+                })
+            })
+
+            watchEffect((onCleanup) => {
+                // ...
+                onCleanup(() => {
+                    // cleanup logic
+                })
+            })
+            ```
+        We can also make flush post to make the watch update like component update or sync with each changes
+        watch(source, callback, {
+            flush: 'post'|'sync'
+        })
+
+        watchEffect(callback, {
+        flush: 'post'|'sync'
+        })
+        Post-flush watchEffect() also has a convenience alias, watchPostEffect()
+        Sync watchEffect() also has a convenience alias, watchSyncEffect():
+    Stopping a Watcher [IGNORED]
+Template Refs
+    ```
+        <script setup>
+            import { useTemplateRef, onMounted } from 'vue'
+
+            // the first argument must match the ref value in the template
+            const input = useTemplateRef('my-input')
+
+            onMounted(() => {
+                input.value.focus()
+            })
+        </script>
+
+        <template>
+            <input ref="my-input" />
+        </template>
+    ```
+    We can only access ref when the component is mounted
+    Refs inside v-for [DOUBT]
+    Function Refs
+        <input :ref="(el) => { /* assign el to a property or ref */ }">
+        we can use function and first parameter as element in :ref
+Component Basics
+    defineProps() => define props
+    defineEmits() => define emits, emits is worked as custom event and it can used to pass data children to parent like reverse method of props
+    slot
+        we can access a children of component in inside a component like a slot component <slot></slot>
+    Dynamic component
+        <component :is="tabs[currentTab]"></component>
+        :is = is passed as a component
+    Component are caseInsenitive <my-component />  == <MyComponent />
+
+--------------------------------------------------------
+
+
+
+
+
+
+
+## Components in Depth
+
+Registration
+    app.component('MyComponent', MyComponent) register component globally and access anycomponent without import
+    Component name should be PascalCase like <MyComponent> or kebab-case like <my-component>
+Props
+    DEFINE DATA TYPES TO PROPS
+        defineProps({
+            title: String,
+            likes: Number
+        })
+    Prop Validation
+        defineProps({
+            // Basic type check
+            //  (`null` and `undefined` values will allow any type)
+            propA: Number,
+            // Multiple possible types
+            propB: [String, Number],
+            // Required string
+            propC: {
+                type: String,
+                required: true
+            },
+            // Required but nullable string
+            propD: {
+                type: [String, null],
+                required: true
+            },
+            // Number with a default value
+            propE: {
+                type: Number,
+                default: 100
+            },
+            // Object with a default value
+            propF: {
+                type: Object,
+                // Object or array defaults must be returned from
+                // a factory function. The function receives the raw
+                // props received by the component as the argument.
+                default(rawProps) {
+                return { message: 'hello' }
+                }
+            },
+            // Custom validator function
+            // full props passed as 2nd argument in 3.4+
+            propG: {
+                validator(value, props) {
+                // The value must match one of these strings
+                return ['success', 'warning', 'danger'].includes(value)
+                }
+            },
+            // Function with a default value
+            propH: {
+                type: Function,
+                // Unlike object or array default, this is not a factory
+                // function - this is a function to serve as a default value
+                default() {
+                return 'Default function'
+                }
+            }
+        })
+    Boolean casting
+        ```
+        defineProps({
+          disabled: Boolean
+        })
+        ```
+        ```
+            <!-- equivalent of passing :disabled="true" -->
+            <MyComponent disabled />
+
+            <!-- equivalent of passing :disabled="false" -->
+            <MyComponent />
+        ```
+Events
+    we can use custom event by using defineEmits that previously exist in this notes
+Component v-model
+    v-model is a two way binding
+    we can also use multiple v-model for same component by defineModel('name') and accesed by parent component by v-model:para
+    Handling v-model Modifiers
+        <MyComponent v-model.capitalize="myText" />
+        const [model, modifiers] = defineModel({
+        set(value) {
+            if (modifiers.capitalize) {
+                return value.charAt(0).toUpperCase() + value.slice(1)
+                }
+            return value
+            }
+        })
+        <UserName
+            v-model:first-name.capitalize="first"
+            v-model:last-name.uppercase="last"
+        />
+Fallthrough Attributes [DOUBT]
+Slot
+    we can use slot as children values <slot></slot>
+    when we enter text with in slot it is dafault value <slot>default value</slot> 
+    Named slot
+        <BaseLayout>
+            <template v-slot:header | #header>
+                <!-- content for the header slot -->
+            </template>
+        </BaseLayout>
+        accesed by <slot name="header"></slot> in children
+    condition checking in slot
+        v-if="$slots.header"
+    Dynamic Slot Names
+        <template v-slot:[dynamicSlotName]> OR <template #[dynamicSlotName]>
+    Scoped slot
+        Pass data to parent componet through where slot called
+        PARENT
+            <MyComponent v-slot="slotProps">
+                {{ slotProps.text }} {{ slotProps.count }}
+            </MyComponent>
+        MyComponent
+            <div>
+                <slot :text="greetingMessage" :count="1"></slot>
+            </div>
+    Named Scoped Slots [DOUBT]
+    Fancy List Example [DOUBT]
+    Renderless Components [DOUBT]
+Prop Drilling
+    Provide
+        we can provide any data from the "provide" method that imprted from 'vue'
+            import { provide } from 'vue'
+            provide(/* key */ 'message', /* value */ 'hello!')
+        we can also pass data to provide from the main.js globally
+            app.provide(/* key */ 'message', /* value */ 'hello!')
+    Inject
+        we can get provided data from the "inject" method that imprted from 'vue'
+            import { inject } from 'vue'
+            const message = inject('message')
+            const value = inject('message', 'default value')
+    Working with Reactivity
+        provide('location', {
+            location,
+            updateLocation
+        })
+        const { location, updateLocation } = inject('location')
+
+        import { ref, provide, readonly } from 'vue'
+        const count = ref(0)
+        provide('read-only-count', readonly(count))
+Async Component
+    local async component
+        const AsyncComp = defineAsyncComponent(() => import('./components/HelloWorld.vue'))
+    global async component
+        app.component('MyComponent', defineAsyncComponent(() =>
+          import('./components/MyComponent.vue')
+        ))
+    Loading and Error States
+        const AsyncComp = defineAsyncComponent({
+            // the loader function
+            loader: () => import('./Foo.vue'),
+
+            // A component to use while the async component is loading
+            loadingComponent: LoadingComponent,
+            // Delay before showing the loading component. Default: 200ms.
+            delay: 200,
+
+            // A component to use if the load fails
+            errorComponent: ErrorComponent,
+            // The error component will be displayed if a timeout is
+            // provided and exceeded. Default: Infinity.
+            timeout: 3000
+        })
+    Lazy Hydration [SERVER_SIDE_RENDERING]
+--------------------------------------------------------------
+
+
+
+
+
+
+Reusability
+-------------
+
+Composables
+    we can reuse any code using composables (get example code in vue website https://vuejs.org/guide/reusability/composables.html)
+Custom directives
+    we can create custom diretive like v-for, v-if, v-show
+    Custom directives should only be used when the desired functionality can only be achieved via direct DOM manipulation.
+Plugins
+    we can use custom plugins to add vue like vutify, vue router, localization translation for these kind of big sceaners
