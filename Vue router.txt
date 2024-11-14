@@ -1,0 +1,55 @@
+Navigate
+    Component based
+        <RouterLink to="/">Go to Home</RouterLink>
+        <RouterLink to="/about">Go to About</RouterLink>
+    Programatic based
+        this.$router.push('/about')
+        import useRouter, useRoute form 'vue-rotuter'
+        router.replace
+Router ouput
+    <Routeview> => output
+Dynamic route matching
+    { path: '/users/:id', component: User },
+    User {{ $route.params.id }}
+    beforeRouteUpdate 
+    { path: '/:pathMatch(.*)*', name: 'NotFound', component: NotFound },
+    { path: '/user-:afterUser(.*)', component: UserGeneric },
+    // matches /o/3549
+    { path: '/o/:orderId' },
+    // matches /p/books
+    { path: '/p/:productName' },
+    // /:orderId -> matches only numbers
+    { path: '/:orderId(\\d+)' },
+    // /:productName -> matches anything else
+    { path: '/:productName' },
+    // /:chapters -> matches /one, /one/two, /one/two/three, etc
+    { path: '/:chapters+' },
+    // /:chapters -> matches /, /one, /one/two, /one/two/three, etc
+    { path: '/:chapters*' },
+Named ROutes
+    ```
+        const routes = [
+        {
+            path: '/user/:username',
+            name: 'profile', 
+            component: User
+        }
+        ]
+    ```
+    ```
+        <router-link :to="{ name: 'profile', params: { username: 'erina' } }">
+            User profile
+        </router-link>
+    ```
+Nested ROutes
+    router.go(1)
+    router.push()
+Named view
+Redirect and alies
+    const routes = [{ path: '/home', redirect: { name: 'homepage' } }]
+    const routes = [{ path: '/home', redirect: () => {} }]
+    const routes = [{ path: '/', component: Homepage, alias: '/home' }]
+Passing Props to Route Components
+    { path: '/user/:id', component: User, props: true }
+Active links
+    can be active link by active link
