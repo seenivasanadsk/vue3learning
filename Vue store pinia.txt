@@ -1,3 +1,6 @@
+WE CAN USE PINI AS A NORMAL COMPSION API VUE 
+BUT WE NEED TO DO THIS
+```
 import { ref, computed } from 'vue'
 import { defineStore } from 'pinia'
 
@@ -11,3 +14,4 @@ export const useCounterStore = defineStore('counter', () => {
 
   return { count, name, doubleCount, increment }
 })
+```

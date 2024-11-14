@@ -1,85 +1,84 @@
-<script setup>
-import { RouterLink, RouterView } from 'vue-router'
-import HelloWorld from './components/HelloWorld.vue'
-</script>
-
 <template>
-  <header>
-    <img alt="Vue logo" class="logo" src="@/assets/logo.svg" width="125" height="125" />
+  <v-card class="mx-auto" max-width="365">
+    <v-toolbar color="light-blue" extended light>
+      <v-app-bar-nav-icon color="grey-darken-4"></v-app-bar-nav-icon>
 
-    <div class="wrapper">
-      <HelloWorld msg="You did it!" />
+      <v-toolbar-title>My files</v-toolbar-title>
 
-      <nav>
-        <RouterLink to="/">Home</RouterLink>
-        <RouterLink to="/about">About</RouterLink>
-      </nav>
-    </div>
-  </header>
+      <v-spacer></v-spacer>
 
-  <RouterView />
+      <v-btn color="grey-darken-4" icon="mdi-magnify"></v-btn>
+
+      <v-btn color="grey-darken-4" icon="mdi-view-module"></v-btn>
+
+      <template v-slot:extension>
+        <v-fab
+          class="ms-4"
+          color="cyan-accent-2"
+          icon="mdi-plus"
+          location="top left"
+          size="50"
+          absolute
+          offset
+          @click="dialog = !dialog"
+        ></v-fab>
+      </template>
+    </v-toolbar>
+    <v-chip label="">Seeni</v-chip>
+    <v-list lines="two" subheader>
+      <v-list-subheader title="Folders" inset></v-list-subheader>
+
+      <v-list-item v-for="item in items" :key="item.title" link>
+        <template v-slot:prepend>
+          <v-avatar :class="[item.iconClass]" :icon="item.icon"></v-avatar>
+        </template>
+
+        <v-list-item-title>{{ item.title }}</v-list-item-title>
+
+        <v-list-item-subtitle>{{ item.subtitle }}</v-list-item-subtitle>
+
+        <template v-slot:append>
+          <v-list-item-action>
+            <v-btn color="grey-lighten-1" icon="mdi-information" variant="text"></v-btn>
+          </v-list-item-action>
+        </template>
+      </v-list-item>
+
+      <v-divider inset></v-divider>
+
+      <v-list-subheader title="Files" inset></v-list-subheader>
+
+      <v-list-item v-for="item in items2" :key="item.title" link>
+        <template v-slot:prepend>
+          <v-avatar :class="[item.iconClass]" :icon="item.icon"></v-avatar>
+        </template>
+
+        <v-list-item-title>{{ item.title }}</v-list-item-title>
+
+        <v-list-item-subtitle>{{ item.subtitle }}</v-list-item-subtitle>
+
+        <template v-slot:append>
+          <v-list-item-action>
+            <v-btn color="grey-lighten-1" icon="mdi-information" variant="text"></v-btn>
+          </v-list-item-action>
+        </template>
+      </v-list-item>
+    </v-list>
+
+    <v-dialog v-model="dialog" max-width="500">
+      <v-card>
+        <v-card-text>
+          <v-text-field label="File name"></v-text-field>
+
+          <small class="text-grey">* This doesn't actually save.</small>
+        </v-card-text>
+
+        <v-card-actions>
+          <v-spacer></v-spacer>
+
+          <v-btn color="primary" variant="text" @click="dialog = false"> Submit </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+  </v-card>
 </template>
-
-<style scoped>
-header {
-  line-height: 1.5;
-  max-height: 100vh;
-}
-
-.logo {
-  display: block;
-  margin: 0 auto 2rem;
-}
-
-nav {
-  width: 100%;
-  font-size: 12px;
-  text-align: center;
-  margin-top: 2rem;
-}
-
-nav a.router-link-exact-active {
-  color: var(--color-text);
-}
-
-nav a.router-link-exact-active:hover {
-  background-color: transparent;
-}
-
-nav a {
-  display: inline-block;
-  padding: 0 1rem;
-  border-left: 1px solid var(--color-border);
-}
-
-nav a:first-of-type {
-  border: 0;
-}
-
-@media (min-width: 1024px) {
-  header {
-    display: flex;
-    place-items: center;
-    padding-right: calc(var(--section-gap) / 2);
-  }
-
-  .logo {
-    margin: 0 2rem 0 0;
-  }
-
-  header .wrapper {
-    display: flex;
-    place-items: flex-start;
-    flex-wrap: wrap;
-  }
-
-  nav {
-    text-align: left;
-    margin-left: -1rem;
-    font-size: 1rem;
-
-    padding: 1rem 0;
-    margin-top: 1rem;
-  }
-}
-</style>
